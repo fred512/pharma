@@ -12,12 +12,12 @@
         <div class="input-group-prepend">
           <span class="input-group-text" id="basic-addon1"><i class="fa fa-search text-secondary fa-2x" aria-hidden="true"></i></span>
         </div>
-        <input type="text" v-model="criteria" class="form-control" placeholder="Pesquisar" aria-describedby="basic-addon1">
+        <input type="text" v-model="criteria" class="form-control" placeholder="Pesquisar pacientes" aria-describedby="basic-addon1">
         <div class="input-group-append">
           <span class="input-group-text" @click="criteria=''"><i class="fa fa-times text-secondary fa-2x" aria-hidden="true"></i></span>
         </div>
       </div>
-      <span >{{filtrados.length}} pacientes filtrados de {{patients.length}} total <span>buscados</span></span>
+      <span >{{filtrados.length}} pacientes filtrados do total de {{patients.length}}<span> buscados</span></span>
     </div>
 
     <div class="gridTabela" style="width:100%">
@@ -33,13 +33,13 @@
           <div class="td header">Actions</div>
         </div> 
         <div class="tr" v-for="usur in filtrados" :key="usur.ID">
-          <div class="td" style="text-align:left" @click="selecionaCli(usur)">{{usur.name.first}} {{usur.name.last}}</div>
+          <div class="td" style="text-align:left">{{usur.name.first}} {{usur.name.last}}</div>
           <!-- <div class="td" style="text-align:left">{{usur.CPF}}</div> -->
-          <div class="td" style="text-align:center" @click="selecionaCli(usur)">{{usur.gender}}</div>
-          <div class="td" style="text-align:center" @click="selecionaCli(usur)">{{usur.dob.date.split("T")[0].split("-").reverse().join("/")}}</div>
+          <div class="td" style="text-align:center">{{usur.gender}}</div>
+          <div class="td" style="text-align:center">{{usur.dob.date.split("T")[0].split("-").reverse().join("/")}}</div>
           <div class="td" style="vertical-align: middle;text-align: center;white-space: nowrap;">
             &nbsp;<i class="fa fa-eye" style="outline:none;"
-                    aria-hidden="true" @click="cadastro(usur)"></i>
+                    aria-hidden="true" @click="mostraPerfil(usur)"></i>
           </div>
         </div>
       </div>
@@ -51,22 +51,34 @@
         <i class="fa fa-angle-right fa-2x" aria-hidden="true" @click="maisPatients(1)"></i>
       </div>
     </div>
+      <b-modal id="modalPerfil" size="lg" class="myModalProjet" centered title="" hide-footer header-text-variant="info">
+        <b-container>
+          <Perfil :patientSel="patient"/>
+        </b-container>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import Perfil from './perfil.vue'
 export default {
   name: "lista",
   props:[''],
+  components: { Perfil },
   data: function() {
     return {
       criteria:'',
       page:1,
-      // patients:[]
+      patient:[]
     }
   },
   methods:{
+    mostraPerfil(patient){
+      console.log(patient)
+      this.patient=patient
+      this.$bvModal.show('modalPerfil')
+    },
     maisPatients(direction){
       if (direction){
         this.page++
@@ -252,6 +264,18 @@ export default {
   }
   .pagina>div{
     width: 55%;
+  }
+}
+@media (max-width: 375px){
+  .lista {
+    width: 90%;
+    margin: 1.75rem auto;
+  }
+  .gridTabela{
+    max-height: 42vh;
+  }
+  div.info-tab > span > span{
+    display: none;
   }
 }
 @media (max-width: 320px){
