@@ -30,7 +30,7 @@
           <div class="td header">Gender</div>
           <div class="td header">Birth</div>
           <div class="td header">Actions</div>
-        </div>
+        </div> 
         <div class="tr" v-for="usur in filtrados" :key="usur.ID">
           <div class="td" style="text-align:left" @click="selecionaCli(usur)">{{usur.name.first}} {{usur.name.last}}</div>
           <!-- <div class="td" style="text-align:left">{{usur.CPF}}</div> -->

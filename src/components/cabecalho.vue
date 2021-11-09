@@ -3,7 +3,7 @@
     <div class="logo">
       <img alt="Pharma logo" src="../assets/logoPharma3.png">
       <span>
-        {{titulo}}
+        {{titulo }}
       </span>
     </div>
     <i class="fa fa-user-md fa-3x" aria-hidden="true"></i>
