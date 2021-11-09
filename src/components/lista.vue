@@ -22,9 +22,10 @@
 
     <div class="gridTabela" style="width:100%">
       <div width="100%" class="table">
-        <div class="tr header bg-primary">
-          <div class="td header" style="text-align:left">Name
-            <i class="fa fa-sort-alpha-asc" aria-hidden="true"></i>
+        <div class="tr header ">
+          <div class="td header" style="text-align:center">
+            <span style="margin-right:10px"> Name</span>
+            <span><i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></span> 
           </div>
           <!-- <div class="td header">CPF/CNPJ</div> -->
           <div class="td header">Gender</div>
@@ -34,16 +35,17 @@
         <div class="tr" v-for="usur in filtrados" :key="usur.ID">
           <div class="td" style="text-align:left" @click="selecionaCli(usur)">{{usur.name.first}} {{usur.name.last}}</div>
           <!-- <div class="td" style="text-align:left">{{usur.CPF}}</div> -->
-          <div class="td" style="text-align:left" @click="selecionaCli(usur)">{{usur.gender}}</div>
-          <div class="td" style="text-align:left" @click="selecionaCli(usur)">{{usur.dob.date}}</div>
-          <div class="td" style="text-align:left" @click="selecionaCli(usur)">{{usur.CONTATO}}</div>
-          <div class="td">{{usur.ATIVO==1?"Sim":"Não"}}</div>
+          <div class="td" style="text-align:center" @click="selecionaCli(usur)">{{usur.gender}}</div>
+          <div class="td" style="text-align:center" @click="selecionaCli(usur)">{{usur.dob.date.split("T")[0].split("-").reverse().join("/")}}</div>
           <div class="td" style="vertical-align: middle;text-align: center;white-space: nowrap;">
-            &nbsp;<i class="fa fa-pencil-square-o" style="outline:none;"
+            &nbsp;<i class="fa fa-eye" style="outline:none;"
                     aria-hidden="true" @click="cadastro(usur)"></i>
           </div>
         </div>
       </div>
+    </div>
+    <div class="pagina">
+        <i class="fa fa-repeat fa-rotate-180" aria-hidden="true"></i>&nbsp; Carregar mais pacientes
     </div>
   </div>
 </template>
@@ -56,18 +58,21 @@ export default {
   data: function() {
     return {
       criteria:'',
+      page:1,
+      // patients:[]
     }
   },
   methods:{
-    getpatients(){
-      var url="https://randomuser.me/api/?seed=f54749b11a4f1deb&nat=BR&results=50&inc=gender,name,nat"
-      axios.get(url)
+    async getpatients(){
+      var url="https://randomuser.me/api/?seed=f54749b11a4f1deb&nat=BR&page="+this.page+"&results=50"
+      var patients=await axios.get(url)
         .then(function(response){
-          this.$store.commit("setPatients", response.data.results)
-          this.filtrados=this.patients
+          return response.data.results
         }).catch((err) => {
           alert(err)
         })
+      this.$store.commit("setPatients", patients)
+      // this.filtrados=this.patients
     },
     ordenaLista(property) {
       var sortOrder=1
@@ -93,20 +98,21 @@ export default {
           if (opcao=="Atrasado"&&item.alerta!=="V") selecionado=false
           return selecionado ? item : ''
         })
-      }
+    }
   },
   mounted() {
     this.getpatients()
   },
-  // created(){
-  // },
+  created(){
+    this.$store.commit("setPatients", [])
+  },
   computed:{
     patients(){
-      this.store.patients
+      return this.$store.state.patients
     },
-    filtrados() {
+    filtrados(){
       let criteria=this.criteria
-      if (!criteria) return this.clientes
+      if (!criteria) return this.patients
       return this.patients.filter(item => {
          return JSON.stringify(item).toLowerCase().indexOf(criteria.toLowerCase()) > -1
       })
@@ -119,7 +125,7 @@ export default {
 
 <style>
 .lista{
-  width:70%;
+  width:60%;
   display: flex; 
   margin-top: 15px;
   justify-content: center;
@@ -128,6 +134,8 @@ export default {
 }
 .gridTabela{
   max-width: 100%;
+  overflow: auto;
+  max-height: 70vh;
 }
 .table .tr:hover {
   /* color: #43a047  !important; */
@@ -137,20 +145,19 @@ export default {
   -moz-box-shadow: inset 0px 0px 4px 4px rgba(0, 0, 0, 0.21);
   box-shadow: inset 0px 0px 4px 4px rgba(0, 0, 0, 0.21);
 }
+.header{
+  display: table-header-group;
+  position: sticky;
+  top: 0;
+}
 .td.header {
   background-color: #057fa4;
   color: #fff;
   position: sticky;
-  top: 0px;
   z-index: 1;
   vertical-align: middle;
   font-weight: 800 !important;
   height: 40px;
-}
-.td.header:first-child {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
 }
 .table {
   display: table;
@@ -159,9 +166,8 @@ export default {
 }
 .tr {
   display: table-row;
-  color: #057fa4 !important;
+  color: #fff !important;
 }
-
 .thead {
   display: table-header-group;
 }
@@ -169,10 +175,7 @@ export default {
   margin: 5px;
   font-size: 1.5rem;
   padding: 0;
-}
-.table > .header.tr > .td:last-child i {
-  font-size: 30px;
-  padding: 5px 0;
+  cursor: pointer;
 }
 .td,
 .th {
@@ -200,6 +203,17 @@ export default {
 .input-group-append,
 .input-group-prepend{
   cursor: pointer;
+}
+.pagina{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+  font-family: system-ui;
+  font-weight: 200;
+  font-size: 1.5rem;
 }
 @media (max-width: 420px){
   .lista {

@@ -1,5 +1,6 @@
 import '@babel/polyfill'
 import 'mutationobserver-shim'
+// import store from "@/store/store";
 import Vue from 'vue'
 // import "@/plugins/axios";
 import './plugins/bootstrap-vue'

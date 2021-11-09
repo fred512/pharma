@@ -3,13 +3,13 @@ import Vuex from 'vuex'
 Vue.use(Vuex) 
 export default new Vuex.Store({
   state:{
-    pacients:[],
+    patients:[],
   },
   getters:{
   },
   mutations:{
     setPatients(state,result){
-      state.pacients=result
+      state.patients=result
     },
   }
 })

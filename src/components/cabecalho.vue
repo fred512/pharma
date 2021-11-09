@@ -23,7 +23,7 @@ export default {
     if (window.innerWidth) this.titulo="Pharma"
   },
   computed(){
-    
+    return this.$store.state.patients
   }
 
 }
