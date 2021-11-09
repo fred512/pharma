@@ -17,7 +17,7 @@
           <span class="input-group-text" @click="criteria=''"><i class="fa fa-times text-secondary fa-2x" aria-hidden="true"></i></span>
         </div>
       </div>
-      <!-- <span style="color: #057fa4;font-weight: 600 !important;">{{filtrados.length}} de {{clientes.length}} clientes</span> -->
+      <span >{{filtrados.length}} pacientes filtrados de {{patients.length}} total <span>buscados</span></span>
     </div>
 
     <div class="gridTabela" style="width:100%">
@@ -45,7 +45,11 @@
       </div>
     </div>
     <div class="pagina">
-        <i class="fa fa-repeat fa-rotate-180" aria-hidden="true"></i>&nbsp; Carregar mais pacientes
+      <div>
+        <i class="fa fa-angle-left fa-2x" aria-hidden="true" @click="maisPatients(0)"></i>
+          Page: {{page}}
+        <i class="fa fa-angle-right fa-2x" aria-hidden="true" @click="maisPatients(1)"></i>
+      </div>
     </div>
   </div>
 </template>
@@ -63,6 +67,16 @@ export default {
     }
   },
   methods:{
+    maisPatients(direction){
+      if (direction){
+        this.page++
+      } else{
+        this.page--
+      }
+      if (this.page==0) this.page=1
+      this.criteria=''
+      this.getpatients()
+    },
     async getpatients(){
       var url="https://randomuser.me/api/?seed=f54749b11a4f1deb&nat=BR&page="+this.page+"&results=50"
       var patients=await axios.get(url)
@@ -135,7 +149,7 @@ export default {
 .gridTabela{
   max-width: 100%;
   overflow: auto;
-  max-height: 70vh;
+  max-height: 65vh;
 }
 .table .tr:hover {
   /* color: #43a047  !important; */
@@ -188,12 +202,14 @@ export default {
 .info-tab{
   display: flex;
   width: 100%;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-end;
 }
 .info-tab > span{
-  margin-right: 45px;
-  font-weight: 500;
+  margin-right: 15px;
+  font-weight: 100;
+  font-family: system-ui;
+  margin-top: -10px;
 }
 .loren{
   text-align: justify;
@@ -205,17 +221,25 @@ export default {
   cursor: pointer;
 }
 .pagina{
-  width: 100%;
+  width:100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+}
+.pagina>div{
+  width: 30%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0 100px 0 0 ;
   padding: 20px;
   cursor: pointer;
   font-family: system-ui;
   font-weight: 200;
   font-size: 1.5rem;
 }
-@media (max-width: 420px){
+
+@media (max-width: 780px){
   .lista {
     width: 85%;
     margin: 1.75rem auto;
@@ -223,11 +247,27 @@ export default {
   .loren2{
     display: none;
   }
+  .gridTabela{
+    max-height: 45vh;
+  }
+  .pagina>div{
+    width: 55%;
+  }
 }
 @media (max-width: 320px){
-.lista {
-  width: 95%;
-  margin: 1.75rem auto;
+  .lista {
+    width: 95%;
+    margin: 1.75rem auto;
+    overflow: scroll;
+  }
+  .gridTabela{
+    max-height:35vh;
+  }
+  .pagina>div{
+    width: 70%;
+  }
+  div.info-tab > span > span{
+    display: none;
   }
 }
 </style>

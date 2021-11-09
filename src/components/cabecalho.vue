@@ -41,8 +41,8 @@ export default {
   margin-right: 10px;
 }
 .cabecalho>.logo>img{
-  width: 60px;  
-  height: 60px;
+  width: 50px;  
+  height: 50px;
 }
 .logo{
   display: flex;
@@ -50,6 +50,6 @@ export default {
 }
 .logo>span{
   font-size: 2.4rem;
-  color: #03B6B3;
+  color: #fff;
 }
 </style>
