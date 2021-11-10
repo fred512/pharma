@@ -12,7 +12,7 @@
 - Projeto desenvolvido como teste de capacitação para a **Coodesh**.
 ---
 ## 🩺Descrição
-Aplicativo feito para buscar pacientes e seus dados, numa consulta com váriios filtros, utilizado a API https://randomuser.me/api/
+Aplicativo feito para buscar pacientes e seus dados, numa consulta com váriios filtros, utilizado a API [https://randomuser.me/api/](https://randomuser.me/)
 
 ---
 
