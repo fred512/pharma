@@ -52,3 +52,7 @@ en- Para limpar essa pesquisa, clicar no botão ✖ do campo "Pesquisar paciente
 - Para ordenar a tabela por nome de paciente clique no ícone de ordenamento no cabeçalho da tabela, ao lado da palavra **Name**. Os pacientes serão listados em ordem alfabética crescente. Ao clicar neste ícone novamente a ordenação será decrescente.
 - Para filtrar os pacientes na página por sexo, clique no ícone masculino ou feminino. Para cancelar esse filtro clique na palavra **Gender**.
 
+--- 
+Projeto foi desenvolvido por \
+👨🏻‍🎓 Carlos Frederico de Mendonca Borges\
+📧 fredborges512@gmail.com
