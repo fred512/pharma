@@ -1,21 +1,40 @@
 <template>
   <div class="lista">
-    <p class="loren">Opus igitur est dicere possuit dura moni specie."Tu autem in specie, non vicentur, nec ominino res est." Et examine ab eis praecepta eius quae hbes, et primo et principaliter.
-      <!-- <span class="loren2">
-        nesciunt nihil aut nostrum explicabo reprehenderit optio amet ab temporibus asperiores quasi cupiditate. Voluptatum ducimus voluptates voluptas? */
-      </span> -->
-        
-
-    </p>
     <div class="info-tab">
-      <div class="input-group mb-2 col-md-4">
-        <div class="input-group-prepend">
+      <div class="input-group mb-2 ">
+        <div class="filtroBusca" :class="{'buscaNat':nat!==''}">
+          <div class="input-group ">
+            <div class="input-group-prepend" @click="filtrar('')" id="filtroNat">
+              <span class="input-group-text" id="basic-addon1" @click="getpatients()">
+                <i class="fa fa-globe text-secondary fa-2x" aria-hidden="true"></i>
+                <!-- <i class="fa fa-search text-secondary fa-2x" aria-hidden="true"></i> -->
+              </span>
+            </div>
+            <b-tooltip target="filtroNat" placement="top" variant="secondary">
+              <strong>Clique aqui para buscar pacientes da nacionalidade digitada</strong>
+            </b-tooltip>
+            <input type="text" v-model="nat" class="form-control" maxlength="2" placeholder="Nat" aria-describedby="basic-addon1">
+            <div class="input-group-append" id="limparNat">
+              <span class="input-group-text" @click="nat='';getpatients()"><i class="fa fa-times text-secondary fa-2x" aria-hidden="true"></i></span>
+            </div>
+            <b-tooltip target="limparNat" placement="top" variant="secondary">
+              <strong>Apagar campo de Nacionalidade</strong>
+            </b-tooltip>
+          </div>
+        </div>
+        <div class="input-group-prepend" @click="filtrar('')" id="filtro">
           <span class="input-group-text" id="basic-addon1"><i class="fa fa-search text-secondary fa-2x" aria-hidden="true"></i></span>
         </div>
-        <input type="text" v-model="criteria" class="form-control" placeholder="Pesquisar pacientes" aria-describedby="basic-addon1">
-        <div class="input-group-append">
-          <span class="input-group-text" @click="criteria=''"><i class="fa fa-times text-secondary fa-2x" aria-hidden="true"></i></span>
+        <b-tooltip target="filtro" placement="top" variant="secondary">
+          <strong>Clique para filtrar pelo campo digitado</strong>
+        </b-tooltip>
+        <input type="text" v-model="criteria" class="form-control" placeholder="Pesquisar pacientes nesta página" aria-describedby="basic-addon1">
+        <div class="input-group-append" id="limpar">
+          <span class="input-group-text" @click="criteria='';filtrar('')"><i class="fa fa-times text-secondary fa-2x" aria-hidden="true"></i></span>
         </div>
+        <b-tooltip target="limpar" placement="top" variant="secondary">
+          <strong>Clique para limpar o filtro da página</strong>
+        </b-tooltip>
       </div>
       <span >{{filtrados.length}} pacientes filtrados do total de {{patients.length}}<span> buscados</span></span>
     </div>
@@ -25,10 +44,27 @@
         <div class="tr header ">
           <div class="td header" style="text-align:center">
             <span style="margin-right:10px"> Name</span>
-            <span><i class="fa fa-sort-alpha-asc" aria-hidden="true"></i></span> 
+            <span id="order"><i class="fa fa-sort-alpha-asc" aria-hidden="true"
+              @click="filtrados.sort(ordenaLista())"></i></span> 
+            <b-tooltip target="order" placement="top" variant="secondary">
+              <strong>Clique para ordenar por nome</strong>
+            </b-tooltip>
           </div>
           <!-- <div class="td header">CPF/CNPJ</div> -->
-          <div class="td header">Gender</div>
+          <div class="td header">
+            <i class="fa fa-mars" :class="{'text-warning':gender=='male'}" id="male" @click="filtrar('male')"></i>&nbsp;
+            <b-tooltip target="male" placement="top" variant="secondary">
+              <strong>Clique para filtrar sexo masculino</strong>
+            </b-tooltip>
+            <span @click="filtrar('')" style="cursor:pointer;" id="gender"> Gender</span>
+            <b-tooltip target="gender" placement="top" variant="secondary">
+              <strong>Clique para limpar o filtro de sexo </strong>
+            </b-tooltip>
+            <i class="fa fa-venus" :class="{'text-warning':gender=='female'}" id="female" @click="filtrar('female')"></i>
+            <b-tooltip target="female" placement="top" variant="secondary">
+              <strong>Clique para filtrar sexo feminino</strong>
+            </b-tooltip>
+          </div>
           <div class="td header">Birth</div>
           <div class="td header">Actions</div>
         </div> 
@@ -70,9 +106,18 @@ export default {
     return {
       criteria:'',
       page:1,
-      patient:[]
+      nat:'',
+      patient:[],
+      reverse:true,
+      gender:''
     }
   },
+  // watch: {
+  //   criteria: function(val, oldVal) {
+  //     this.filtrar(val)
+  //     console.log(oldVal)
+  //   }
+  // },
   methods:{
     mostraPerfil(patient){
       console.log(patient)
@@ -90,60 +135,60 @@ export default {
       this.getpatients()
     },
     async getpatients(){
-      var url="https://randomuser.me/api/?seed=f54749b11a4f1deb&nat=BR&page="+this.page+"&results=50"
+      var url="https://randomuser.me/api/?seed=f54749b11a4f1deb&page="+this.page+"&results=50"
+      if (this.nat!=='') url+="&nat="+this.nat.toLowerCase()
+      // var url="https://randomuser.me/api/?seed=f54749b11a4f1deb&nat=BR&page="+this.page+"&results=50"
       var patients=await axios.get(url)
         .then(function(response){
           return response.data.results
         }).catch((err) => {
           alert(err)
         })
+      patients=patients.map(function(el){
+        el.nomecompleto=el.name.first+" "+el.name.last
+        return el
+      })
+      this.filtrados=patients
       this.$store.commit("setPatients", patients)
       // this.filtrados=this.patients
     },
-    ordenaLista(property) {
+    ordenaLista() {
+      var property='nomecompleto'
       var sortOrder=1
-      if (this.reverse) sortOrder = -1
+      if (!this.reverse) sortOrder = -1
       this.reverse=!this.reverse
       this.field=property
       return function (a,b) {
-          /* next line works with strings and numbers, 
-          * and you may want to customize it to your needs
-          */
           var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
           return result * sortOrder;
       }
     },
-    filtrar() {
+    filtrar(gender) {
       let criteria=this.criteria
-        let opcao=this.selected
-        this.filtrados= this.pedidos.filter(item => {
-          let selecionado=true
-          if (criteria&&JSON.stringify(item).toLowerCase().indexOf(criteria.toLowerCase()) == -1) selecionado=false
-          if (opcao=="Pronto"&&item.PRONTO!==true) selecionado=false
-          if (opcao=="Alerta"&&item.alerta!=="A") selecionado=false
-          if (opcao=="Atrasado"&&item.alerta!=="V") selecionado=false
-          return selecionado ? item : ''
-        })
-    }
+      this.gender=gender
+      this.filtrados=[]
+      var filtrados = this.patients.filter(item => {
+        let selecionado=true
+        if (criteria&&JSON.stringify(item).toLowerCase().indexOf(criteria.toLowerCase()) == -1) selecionado=false
+        if (item.gender!==gender&&gender!=='') selecionado=false
+        return selecionado ? item : ''
+      })
+      this.filtrados=filtrados
+      this.$forceUpdate()
+    },
   },
-  mounted() {
-    this.getpatients()
+  async mounted() {
+    await this.getpatients()
+    this.filtrados= this.patients
   },
   created(){
+    this.filtrados=[]
     this.$store.commit("setPatients", [])
   },
   computed:{
     patients(){
       return this.$store.state.patients
     },
-    filtrados(){
-      let criteria=this.criteria
-      if (!criteria) return this.patients
-      return this.patients.filter(item => {
-         return JSON.stringify(item).toLowerCase().indexOf(criteria.toLowerCase()) > -1
-      })
-    }
-    
   }
 
 }
@@ -163,13 +208,14 @@ export default {
   overflow: auto;
   max-height: 65vh;
 }
+.table i{
+  cursor: pointer;
+}
 .table .tr:hover {
-  /* color: #43a047  !important; */
-  /* background-color: rgba(187, 222, 251, 0.4) !important; */
-  background-color: rgba(0, 0, 0, 0.1) !important;
-  -webkit-box-shadow: inset 0px 0px 4px 4px rgba(0, 0, 0, 0.21);
-  -moz-box-shadow: inset 0px 0px 4px 4px rgba(0, 0, 0, 0.21);
-  box-shadow: inset 0px 0px 4px 4px rgba(0, 0, 0, 0.21);
+  background-color: rgba(255,255, 255, 0.1) !important;
+  -webkit-box-shadow: inset 0px 0px 4px 4px rgba(255,255, 255, 0.1);
+  -moz-box-shadow: inset 0px 0px 4px 4px rgba(255,255, 255, 0.1);
+  box-shadow: inset 0px 0px 4px 4px rgba(255,255, 255, 0.1);
 }
 .header{
   display: table-header-group;
@@ -207,6 +253,7 @@ export default {
 .th {
   padding: 5px;
   display: table-cell;
+  vertical-align: middle;
 }
 .th {
   display: table-header-group;
@@ -216,6 +263,9 @@ export default {
   width: 100%;
   flex-direction: column;
   align-items: flex-end;
+}
+.info-tab input{
+  height: 46px;
 }
 .info-tab > span{
   margin-right: 15px;
@@ -249,6 +299,18 @@ export default {
   font-family: system-ui;
   font-weight: 200;
   font-size: 1.5rem;
+}
+.buscaNat input{
+  background-color: #900 !important;
+  color: yellow;
+  font-weight: 800;
+}
+.filtroBusca{
+  width: 25%;
+  margin-right: 10px;
+}
+.filtroBusca input{
+  text-transform: uppercase;
 }
 
 @media (max-width: 780px){

@@ -65,12 +65,23 @@ export default {
 ul>li{
   height: 50px;
   margin-top: 15px;
+  width: 100%;
+  color: #004d40;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   border-bottom: 1px solid #ddd;
+  padding-bottom: 6px;
 }
-
+.modal-content{
+  background-color: #e8e8e8 !important;
+}
+#modalPerfil___BV_modal_header_ > button{
+  font-size: 1.2rem;
+  color: #fff !important;
+  text-transform: uppercase !important;
+  background-color: #dc3545;
+}
 /* @media (max-width: 760px){
   .foto{
     left: 35%;
