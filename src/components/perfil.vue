@@ -63,7 +63,7 @@ export default {
   font-size: 1.2rem;
 }
 ul>li{
-  height: 50px;
+  height: 42px;
   margin-top: 15px;
   width: 100%;
   color: #004d40;
